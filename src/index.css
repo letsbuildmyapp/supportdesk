@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light: warm slate with orange accent */
+  --bg: 248 250 252;          /* slate-50 */
+  --bg-panel: 255 255 255;
+  --bg-subtle: 241 245 249;   /* slate-100 */
+  --bg-hover: 226 232 240;    /* slate-200 */
+  --fg: 15 23 42;             /* slate-900 */
+  --fg-muted: 71 85 105;      /* slate-600 */
+  --fg-subtle: 100 116 139;   /* slate-500 */
+  --line: 226 232 240;        /* slate-200 */
+  --line-strong: 203 213 225; /* slate-300 */
+  --accent: 234 88 12;        /* orange-600 */
+  --accent-hover: 194 65 12;  /* orange-700 */
+  --success: 22 163 74;
+  --warn: 217 119 6;
+  --danger: 220 38 38;
+}
+
+.dark {
+  --bg: 15 17 22;
+  --bg-panel: 22 25 32;
+  --bg-subtle: 28 32 40;
+  --bg-hover: 38 43 53;
+  --fg: 241 245 249;
+  --fg-muted: 148 163 184;
+  --fg-subtle: 100 116 139;
+  --line: 38 43 53;
+  --line-strong: 51 58 70;
+  --accent: 251 146 60;
+  --accent-hover: 249 115 22;
+  --success: 34 197 94;
+  --warn: 245 158 11;
+  --danger: 239 68 68;
+}
+
+html, body, #root { height: 100%; }
+html { color-scheme: light dark; }
+
+body {
+  font-family: 'Spline Sans', ui-sans-serif, system-ui, sans-serif;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono { font-family: 'Spline Sans Mono', ui-monospace, SFMono-Regular, monospace; }
+
+::selection { background: rgb(var(--accent) / 0.25); }
+
+/* Scrollbar */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgb(var(--line-strong)); border-radius: 6px; }
+*::-webkit-scrollbar-thumb:hover { background: rgb(var(--fg-subtle)); }
+
+@layer components {
+  .card {
+    @apply rounded-2xl bg-bg-panel border border-line shadow-soft;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-sm font-medium transition-colors;
+    @apply border border-line bg-bg-panel text-fg hover:bg-bg-subtle;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold transition-colors;
+    @apply bg-accent text-white hover:bg-accent-hover shadow-soft;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 h-10 px-3 rounded-xl text-sm font-medium transition-colors;
+    @apply text-fg-muted hover:text-fg hover:bg-bg-subtle;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-sm font-semibold transition-colors;
+    @apply bg-danger text-white hover:opacity-90;
+  }
+  .input {
+    @apply h-11 w-full rounded-xl border border-line bg-bg-panel px-3.5 text-base text-fg placeholder:text-fg-subtle;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-colors;
+  }
+  .textarea {
+    @apply w-full rounded-xl border border-line bg-bg-panel p-3.5 text-base text-fg placeholder:text-fg-subtle;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-colors resize-y min-h-[120px];
+  }
+  .label {
+    @apply block text-sm font-medium text-fg mb-1.5;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-xs font-medium border border-line bg-bg-subtle text-fg-muted;
+  }
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.08em] font-semibold text-fg-subtle;
+  }
+  .kbd {
+    @apply inline-flex items-center justify-center min-w-[1.5rem] h-6 px-1.5 rounded-md border border-line bg-bg-subtle text-[11px] font-mono font-medium text-fg-muted;
+  }
+}
+
+/* tabular nums utility */
+.tnum { font-variant-numeric: tabular-nums; }

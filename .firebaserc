@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "demo-supportdesk"
+  },
+  "targets": {
+    "demo-supportdesk": {
+      "hosting": {
+        "staging": ["supportdesk-staging"],
+        "production": ["supportdesk"]
+      }
+    }
+  }
+}

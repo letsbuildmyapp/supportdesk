@@ -1,0 +1,292 @@
+import type { Role, Priority, Status, Category } from './types';
+
+export const DEMO_PASSWORD = 'demo1234';
+
+export type SeedUser = {
+  uid: string;
+  email: string;
+  name: string;
+  role: Role;
+  company?: string;
+  avatar?: string;
+};
+
+export const SEED_USERS: SeedUser[] = [
+  // Agents (4)
+  { uid: 'agent-maya',   email: 'maya@supportdesk.demo',   name: 'Maya Chen',     role: 'agent',    company: 'Northwind Support' },
+  { uid: 'agent-jordan', email: 'jordan@supportdesk.demo', name: 'Jordan Reyes',  role: 'agent',    company: 'Northwind Support' },
+  { uid: 'agent-priya',  email: 'priya@supportdesk.demo',  name: 'Priya Patel',   role: 'agent',    company: 'Northwind Support' },
+  { uid: 'agent-tom',    email: 'tom@supportdesk.demo',    name: 'Tom Becker',    role: 'agent',    company: 'Northwind Support' },
+  // Admin (1)
+  { uid: 'admin-alex',   email: 'admin@supportdesk.demo',  name: 'Alex Morgan',   role: 'admin',    company: 'Northwind Support' },
+  // Customers (6)
+  { uid: 'cust-sam',     email: 'sam@acme.demo',           name: 'Sam Brooks',    role: 'customer', company: 'Acme Industries' },
+  { uid: 'cust-elena',   email: 'elena@globex.demo',       name: 'Elena Park',    role: 'customer', company: 'Globex Trading' },
+  { uid: 'cust-raj',     email: 'raj@hooli.demo',          name: 'Raj Kapoor',    role: 'customer', company: 'Hooli Cloud' },
+  { uid: 'cust-mia',     email: 'mia@initech.demo',        name: 'Mia Watanabe',  role: 'customer', company: 'Initech Forms' },
+  { uid: 'cust-ben',     email: 'ben@stark.demo',          name: 'Ben Halloway',  role: 'customer', company: 'Stark Robotics' },
+  { uid: 'cust-noor',    email: 'noor@umbrella.demo',      name: 'Noor Ahmadi',   role: 'customer', company: 'Umbrella Logistics' },
+];
+
+/** Tiles surfaced on Login for one-click sign-in. */
+export const QUICK_TILES: Array<{ uid: string; label: string; tagline: string }> = [
+  { uid: 'cust-sam',   label: 'Customer', tagline: 'Submit & track tickets' },
+  { uid: 'agent-maya', label: 'Agent',    tagline: 'Work the support queue' },
+  { uid: 'admin-alex', label: 'Admin',    tagline: 'Dashboard & reports' },
+];
+
+export const CATEGORIES: Category[] = [
+  { id: 'billing',     name: 'Billing',         color: '#f59e0b' },
+  { id: 'technical',   name: 'Technical issue', color: '#0ea5e9' },
+  { id: 'feature',     name: 'Feature request', color: '#a855f7' },
+  { id: 'account',     name: 'Account',         color: '#10b981' },
+  { id: 'integration', name: 'Integrations',    color: '#f43f5e' },
+];
+
+type TicketSeed = {
+  id: string;
+  subject: string;
+  description: string;
+  category: string;
+  priority: Priority;
+  status: Status;
+  customerId: string;
+  assigneeId?: string;
+  ageHours: number;
+  thread: Array<{ authorId: string; body: string; internal?: boolean; offsetMinutes: number }>;
+};
+
+export const SEED_TICKETS: TicketSeed[] = [
+  {
+    id: 'tkt-1001', subject: 'Stripe webhook returns 401 after key rotation',
+    description: 'Since rotating our webhook signing secret on Tuesday, every event from Stripe is bouncing with a 401. Our endpoint logs show "Invalid signature." We rolled back the secret in Stripe but events are still failing. Production-impacting — blocking subscription renewals.',
+    category: 'integration', priority: 'urgent', status: 'in_progress',
+    customerId: 'cust-raj', assigneeId: 'agent-maya', ageHours: 4,
+    thread: [
+      { authorId: 'agent-maya', body: 'Hi Raj — got it, escalating now. Can you confirm: when you rolled back, did you copy the new secret OR the old one back into your env? And which environment is failing — prod only or staging too?', offsetMinutes: 22 },
+      { authorId: 'cust-raj', body: 'Both prod and staging. We pasted what Stripe showed as "current" — not sure if that was the new or old.', offsetMinutes: 48 },
+      { authorId: 'agent-maya', body: 'Customer pasted the rotated secret while the old one was still active in their env. Walking them through the dual-key window.', internal: true, offsetMinutes: 55 },
+      { authorId: 'agent-maya', body: 'Stripe keeps both old and new active for 24h after rotation. Grab the new one from Developers > Webhooks > Signing secret (click Reveal). Replace STRIPE_WEBHOOK_SECRET in both envs and redeploy. Should clear immediately.', offsetMinutes: 60 },
+    ],
+  },
+  {
+    id: 'tkt-1002', subject: 'Cannot export invoices to PDF — button does nothing',
+    description: 'Click "Export PDF" on the invoices page, no download starts. No error. Tried Chrome and Safari, both Macs.',
+    category: 'technical', priority: 'high', status: 'open',
+    customerId: 'cust-elena', ageHours: 2,
+    thread: [],
+  },
+  {
+    id: 'tkt-1003', subject: 'Add SAML SSO for our enterprise plan',
+    description: 'We need SAML SSO via Okta before we can roll this out company-wide. Roughly 240 seats. Happy to help test.',
+    category: 'feature', priority: 'normal', status: 'waiting',
+    customerId: 'cust-ben', assigneeId: 'agent-priya', ageHours: 72,
+    thread: [
+      { authorId: 'agent-priya', body: 'Thanks Ben — SAML is on the roadmap for Q2. Logged you as the 4th company asking. I\'ll loop in our PM and get back with timing.', offsetMinutes: 90 },
+      { authorId: 'agent-priya', body: 'Followed up with PM. Targeting late June for beta. Worth doing a discovery call?', internal: true, offsetMinutes: 1440 },
+    ],
+  },
+  {
+    id: 'tkt-1004', subject: 'Refund for double-charged June invoice',
+    description: 'Invoice INV-8821 was charged to my card twice on June 3. One charge for $499, then a second identical charge 14 minutes later. Need the duplicate refunded.',
+    category: 'billing', priority: 'high', status: 'resolved',
+    customerId: 'cust-sam', assigneeId: 'agent-jordan', ageHours: 28,
+    thread: [
+      { authorId: 'agent-jordan', body: 'Confirmed the duplicate, Sam. Issuing a refund now — should hit your card in 3-5 business days. Apologies for the friction.', offsetMinutes: 35 },
+      { authorId: 'cust-sam', body: 'Refund just hit. Thanks for the quick turnaround.', offsetMinutes: 1300 },
+      { authorId: 'agent-jordan', body: 'Great — marking resolved.', offsetMinutes: 1320 },
+    ],
+  },
+  {
+    id: 'tkt-1005', subject: 'Slack notifications stopped sending Friday',
+    description: 'Our #support-alerts channel hasn\'t received a single notification since 4pm Friday. Slack OAuth still shows as connected.',
+    category: 'integration', priority: 'high', status: 'in_progress',
+    customerId: 'cust-mia', assigneeId: 'agent-tom', ageHours: 18,
+    thread: [
+      { authorId: 'agent-tom', body: 'Looking at your event log now, Mia. Stand by.', offsetMinutes: 12 },
+      { authorId: 'agent-tom', body: 'Slack rotated their bot tokens overnight Friday — anyone connected before March 12 needs to reauth. Force a reconnect from Settings > Integrations > Slack.', offsetMinutes: 18 },
+    ],
+  },
+  {
+    id: 'tkt-1006', subject: 'How do I bulk-import contacts from CSV?',
+    description: 'New to the platform — can I upload a contacts CSV instead of typing in 600 records by hand?',
+    category: 'account', priority: 'low', status: 'resolved',
+    customerId: 'cust-noor', assigneeId: 'agent-priya', ageHours: 60,
+    thread: [
+      { authorId: 'agent-priya', body: 'Welcome Noor! Yes — Settings > Contacts > Import. Drop in a CSV with columns: name, email, phone (optional), tags (optional, comma-separated). Limit is 25k rows per upload.', offsetMinutes: 40 },
+      { authorId: 'cust-noor', body: 'That worked — all 612 imported clean.', offsetMinutes: 720 },
+    ],
+  },
+  {
+    id: 'tkt-1007', subject: 'Two-factor auth code never arrives',
+    description: 'I never get the SMS code on login. Number is correct (verified twice). Email me a code instead?',
+    category: 'account', priority: 'normal', status: 'in_progress',
+    customerId: 'cust-elena', assigneeId: 'agent-maya', ageHours: 10,
+    thread: [
+      { authorId: 'agent-maya', body: 'Sorry Elena — checking carrier delivery now. Which country code is the number?', offsetMinutes: 25 },
+    ],
+  },
+  {
+    id: 'tkt-1008', subject: 'Dark mode breaks chart legibility on dashboard',
+    description: 'Pie chart legend text is barely visible in dark mode — looks like #444 on #222.',
+    category: 'technical', priority: 'low', status: 'open',
+    customerId: 'cust-ben', ageHours: 36,
+    thread: [],
+  },
+  {
+    id: 'tkt-1009', subject: 'API rate limit lower than docs claim',
+    description: 'Docs say Pro tier is 1000 req/min. We\'re getting throttled at ~600. Headers confirm: X-RateLimit-Limit: 600.',
+    category: 'technical', priority: 'high', status: 'open',
+    customerId: 'cust-raj', ageHours: 6,
+    thread: [],
+  },
+  {
+    id: 'tkt-1010', subject: 'Cancel subscription — moving to a competitor',
+    description: 'We\'re moving to a different vendor. Please cancel effective end of billing period.',
+    category: 'billing', priority: 'normal', status: 'in_progress',
+    customerId: 'cust-mia', assigneeId: 'agent-jordan', ageHours: 14,
+    thread: [
+      { authorId: 'agent-jordan', body: 'Sorry to hear, Mia. Cancellation queued for July 31 (period end). If you have 10 minutes for a quick why-call I\'d love to hear what we missed.', offsetMinutes: 20 },
+      { authorId: 'agent-jordan', body: 'Customer mentioned competitor "Helpwise" — pricing concerns. Flagging for retention.', internal: true, offsetMinutes: 22 },
+    ],
+  },
+  {
+    id: 'tkt-1011', subject: 'Webhooks intermittently delayed by 5+ minutes',
+    description: 'Some webhooks are arriving 5-10 minutes after the underlying event. Inconsistent — maybe 1 in 20 events.',
+    category: 'integration', priority: 'normal', status: 'open',
+    customerId: 'cust-sam', ageHours: 30,
+    thread: [],
+  },
+  {
+    id: 'tkt-1012', subject: 'Need EU data residency option',
+    description: 'Our German subsidiary requires data to be stored in the EU. Do you offer EU-hosted instances?',
+    category: 'feature', priority: 'normal', status: 'waiting',
+    customerId: 'cust-elena', assigneeId: 'agent-priya', ageHours: 96,
+    thread: [
+      { authorId: 'agent-priya', body: 'EU residency is in private beta — let me get you on the access list. What\'s your expected go-live date?', offsetMinutes: 60 },
+    ],
+  },
+  {
+    id: 'tkt-1013', subject: 'Forgot password loop — reset email never arrives',
+    description: 'Click reset, get "email sent." Email never lands. Checked spam, promotions, all folders. Tried 4 times.',
+    category: 'account', priority: 'high', status: 'resolved',
+    customerId: 'cust-noor', assigneeId: 'agent-tom', ageHours: 50,
+    thread: [
+      { authorId: 'agent-tom', body: 'Triggered a reset manually from our admin panel — should land in 60 seconds.', offsetMinutes: 8 },
+      { authorId: 'cust-noor', body: 'Got it, all set. Thanks!', offsetMinutes: 30 },
+    ],
+  },
+  {
+    id: 'tkt-1014', subject: 'Add support for recurring invoices',
+    description: 'We invoice the same 30 clients monthly. Right now I duplicate last month\'s invoices manually. A "recurring" toggle would save hours.',
+    category: 'feature', priority: 'normal', status: 'open',
+    customerId: 'cust-ben', ageHours: 80,
+    thread: [],
+  },
+  {
+    id: 'tkt-1015', subject: 'Account suspended unexpectedly',
+    description: 'Logged in this morning to an "account suspended" banner. We pay on time, no idea why.',
+    category: 'account', priority: 'urgent', status: 'in_progress',
+    customerId: 'cust-mia', assigneeId: 'agent-maya', ageHours: 1,
+    thread: [
+      { authorId: 'agent-maya', body: 'Looking into this immediately, Mia.', offsetMinutes: 5 },
+      { authorId: 'agent-maya', body: 'Auto-suspend triggered by abuse-detection false positive (rapid API spikes). Whitelisting and reactivating now.', internal: true, offsetMinutes: 12 },
+      { authorId: 'agent-maya', body: 'Reactivated. False positive on our abuse detection — tagged your account so this won\'t happen again. Sorry for the scare.', offsetMinutes: 18 },
+    ],
+  },
+  {
+    id: 'tkt-1016', subject: 'Mobile app crashes on Android 14',
+    description: 'App crashes immediately on launch after updating to Android 14. Pixel 7. Reinstalled, same issue.',
+    category: 'technical', priority: 'high', status: 'in_progress',
+    customerId: 'cust-raj', assigneeId: 'agent-tom', ageHours: 22,
+    thread: [
+      { authorId: 'agent-tom', body: 'Confirmed — known issue with Android 14 + Play Services 24.x. Hotfix v3.4.2 is in review with Google, ETA 24-48h.', offsetMinutes: 90 },
+    ],
+  },
+  {
+    id: 'tkt-1017', subject: 'Discount code REWARD20 not applying',
+    description: 'Tried REWARD20 at checkout — error "code expired." Saw it advertised in your newsletter yesterday.',
+    category: 'billing', priority: 'normal', status: 'resolved',
+    customerId: 'cust-sam', assigneeId: 'agent-jordan', ageHours: 90,
+    thread: [
+      { authorId: 'agent-jordan', body: 'Newsletter had a typo — code is REWARD2O (capital O, not zero). Applied a manual 20% credit to your account either way.', offsetMinutes: 25 },
+    ],
+  },
+  {
+    id: 'tkt-1018', subject: 'Custom field changes not persisting',
+    description: 'I add custom fields to a contact, save, refresh — fields are gone. Other edits persist fine.',
+    category: 'technical', priority: 'normal', status: 'open',
+    customerId: 'cust-noor', ageHours: 8,
+    thread: [],
+  },
+  {
+    id: 'tkt-1019', subject: 'Zapier integration shows "disconnected"',
+    description: 'Our Zapier zaps stopped firing this morning. Account shows disconnected even though I never disconnected it.',
+    category: 'integration', priority: 'high', status: 'in_progress',
+    customerId: 'cust-elena', assigneeId: 'agent-priya', ageHours: 5,
+    thread: [
+      { authorId: 'agent-priya', body: 'Zapier rotated OAuth tokens for partners last night — affecting ~3% of accounts. Sending a re-auth link via DM.', offsetMinutes: 15 },
+    ],
+  },
+  {
+    id: 'tkt-1020', subject: 'Onboarding session — can we book?',
+    description: 'Just signed up for the team plan. Sales mentioned a free onboarding session — how do I book?',
+    category: 'account', priority: 'low', status: 'resolved',
+    customerId: 'cust-ben', assigneeId: 'agent-priya', ageHours: 120,
+    thread: [
+      { authorId: 'agent-priya', body: 'Welcome Ben! Booking link: cal.com/supportdesk/onboarding. Pick any 30-min slot in the next 2 weeks. I usually run these.', offsetMinutes: 45 },
+      { authorId: 'cust-ben', body: 'Booked for Thursday. Thanks!', offsetMinutes: 600 },
+    ],
+  },
+  {
+    id: 'tkt-1021', subject: 'Tax ID not appearing on invoices',
+    description: 'Added our VAT number in Billing > Tax Info, but it\'s not showing on the latest invoice PDF.',
+    category: 'billing', priority: 'normal', status: 'open',
+    customerId: 'cust-mia', ageHours: 15,
+    thread: [],
+  },
+  {
+    id: 'tkt-1022', subject: 'Email replies create new tickets instead of threading',
+    description: 'When customers reply to our notification emails, replies show up as new tickets instead of attaching to the original.',
+    category: 'technical', priority: 'high', status: 'in_progress',
+    customerId: 'cust-raj', assigneeId: 'agent-jordan', ageHours: 26,
+    thread: [
+      { authorId: 'agent-jordan', body: 'That happens when the In-Reply-To header gets stripped — usually by an aggressive mail filter on your domain. Can you forward me the raw headers of one offending reply?', offsetMinutes: 50 },
+    ],
+  },
+  {
+    id: 'tkt-1023', subject: 'Whitelabel — can we hide your logo?',
+    description: 'Enterprise question — can we hide your branding from customer-facing pages?',
+    category: 'feature', priority: 'low', status: 'closed',
+    customerId: 'cust-sam', assigneeId: 'agent-priya', ageHours: 600,
+    thread: [
+      { authorId: 'agent-priya', body: 'Whitelabel is included on Enterprise plans. Bumping you up — no extra charge given your seat count. Settings > Branding once it\'s applied.', offsetMinutes: 75 },
+      { authorId: 'cust-sam', body: 'Perfect, all set.', offsetMinutes: 200 },
+    ],
+  },
+  {
+    id: 'tkt-1024', subject: 'Notifications hammering my inbox',
+    description: '40+ emails a day. Need a digest mode.',
+    category: 'account', priority: 'low', status: 'resolved',
+    customerId: 'cust-noor', assigneeId: 'agent-tom', ageHours: 200,
+    thread: [
+      { authorId: 'agent-tom', body: 'Switched on hourly digest for you in Settings > Notifications. You can adjust to daily if hourly is still too much.', offsetMinutes: 20 },
+    ],
+  },
+  {
+    id: 'tkt-1025', subject: 'How do I delete my account permanently?',
+    description: 'Need to fully delete account + all data per GDPR Article 17.',
+    category: 'account', priority: 'normal', status: 'in_progress',
+    customerId: 'cust-elena', assigneeId: 'agent-jordan', ageHours: 12,
+    thread: [
+      { authorId: 'agent-jordan', body: 'Confirmed your identity via the verification link. Scheduling deletion for 30 days from today (recovery window per our ToS). You\'ll get email confirmation when it\'s complete.', offsetMinutes: 60 },
+    ],
+  },
+  {
+    id: 'tkt-1026', subject: 'Audit logs missing for last week',
+    description: 'Compliance review — pulled audit logs and there\'s a 4-day gap from May 8-11. We need those.',
+    category: 'technical', priority: 'urgent', status: 'open',
+    customerId: 'cust-ben', ageHours: 3,
+    thread: [],
+  },
+];
