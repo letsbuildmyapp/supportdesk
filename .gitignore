@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
+.env*
+!.env.example
+.DS_Store
+.firebase
+.vscode
+.idea
+*.log

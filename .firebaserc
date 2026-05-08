@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "supportdesk-lbma"
+  },
+  "targets": {
+    "supportdesk-lbma": {
+      "hosting": {
+        "staging": ["supportdesk-lbma-staging"],
+        "prod": ["supportdesk-lbma-prod"]
+      }
+    }
+  }
+}
